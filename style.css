@@ -1,0 +1,12 @@
+.list-group-item {
+    position: relative;
+}
+
+.note-content {
+    margin-bottom: 10px;
+}
+
+.note-date {
+    font-size: 10px;
+    color: #888;
+}

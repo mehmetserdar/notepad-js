@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+
+    <title>Notepad App</title>
+</head>
+<body>
+    <div class="container">
+        <h1 class="app-title">Notepad App</h1>
+        <div class="row">
+            <div class="col-md-8">
+                <textarea id="note-content" class="form-control" rows="5"></textarea>
+            </div>
+            <div class="col-md-4">
+                <button id="save-button" class="btn btn-primary mt-3">Save 💾</button>
+                <button id="clear-button" class="btn btn-danger mt-3">Clear 🗑️</button>
+                <button id="export-button" class="btn btn-info mt-3">Export 📁</button>
+
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <h3>Notes 🗒️</h3>
+                <ul id="note-list" class="list-group"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
