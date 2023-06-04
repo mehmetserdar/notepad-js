@@ -42,7 +42,6 @@ function createNoteItem(noteId, noteContent) {
 
     var editDeleteContainer = document.createElement('div');
     editDeleteContainer.className = 'float-right';
-    editDeleteContainer.appendChild(noteDate);
     editDeleteContainer.appendChild(editButton);
     editDeleteContainer.appendChild(deleteButton);
 
