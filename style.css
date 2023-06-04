@@ -11,15 +11,3 @@
     color: #888;
 }
 
-/* Hide export button on mobile devices */
-@media only screen and (max-width: 600px) {
-    #export-button {
-      display: none;
-    }
-  }
-  
-  /* Style for the CSV data */
-  #csv-data {
-    margin-top: 20px;
-    font-family: Arial, sans-serif;
-  }
