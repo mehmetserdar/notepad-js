@@ -206,13 +206,16 @@ document.getElementById('random-joke-button').addEventListener('click', function
     getRandomJoke();
 });
 
+
 function getRandomAffirmation() {
-    fetch('https://www.affirmations.dev/')
+    fetch('https://raw.githubusercontent.com/mehmetserdar/affirmations-api/main/affir.json')
         .then(function(response) {
             return response.json();
         })
         .then(function(data) {
-            var affirmation = data.affirmation || 'Unknown';
+            var affirmations = data.affirmations;
+            var randomIndex = Math.floor(Math.random() * affirmations.length);
+            var affirmation = affirmations[randomIndex];
 
             var noteContentTextArea = document.getElementById('note-content');
             noteContentTextArea.value = affirmation;
@@ -225,3 +228,5 @@ function getRandomAffirmation() {
 document.getElementById('random-affirmation-button').addEventListener('click', function() {
     getRandomAffirmation();
 });
+
+
