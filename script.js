@@ -31,6 +31,10 @@ function createNoteItem(noteId, noteContent) {
         alert('Note deleted!');
     });
 
+    document.getElementById('export-button').addEventListener('click', function() {
+        exportNotesToCSV();
+    });
+
     var editDeleteContainer = document.createElement('div');
     editDeleteContainer.className = 'float-right';
     editDeleteContainer.appendChild(noteDate);
@@ -119,3 +123,37 @@ window.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
+
+function exportNotesToCSV() {
+    var csvContent = 'data:text/csv;charset=utf-8,';
+
+    // Add the CSV headers
+    var headers = ['ID', 'Note Content', 'Date'];
+    csvContent += headers.join(',') + '\n';
+
+    // Iterate through the notes and add them to the CSV content
+    for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (key.startsWith(noteKeyPrefix)) {
+            var noteId = key.substring(noteKeyPrefix.length);
+            var noteContent = localStorage.getItem(key);
+            var noteDate = getFormattedDate();
+            var rowData = [noteId, noteContent, noteDate];
+            csvContent += rowData.join(',') + '\n';
+        }
+    }
+
+    // Create a data URI for the CSV content
+    var encodedURI = encodeURI(csvContent);
+
+    // Create a link element and set its attributes for downloading
+    var link = document.createElement('a');
+    link.setAttribute('href', encodedURI);
+    link.setAttribute('download', 'notes.csv');
+
+    // Append the link to the document and trigger the download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
