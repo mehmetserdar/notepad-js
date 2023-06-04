@@ -161,3 +161,67 @@ function exportNotesToCSV() {
     link.click();
     document.body.removeChild(link);
 }
+
+function getRandomQuote() {
+    fetch('https://type.fit/api/quotes')
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            var randomIndex = Math.floor(Math.random() * data.length);
+            var quote = data[randomIndex].text;
+            var author = data[randomIndex].author || 'Unknown';
+
+            var noteContentTextArea = document.getElementById('note-content');
+            noteContentTextArea.value = '"' + quote + '" - ' + author;
+        })
+        .catch(function(error) {
+            console.log('An error occurred while fetching the random quote:', error);
+        });
+}
+
+document.getElementById('random-quote-button').addEventListener('click', function() {
+    getRandomQuote();
+});
+
+
+function getRandomJoke() {
+    fetch('https://v2.jokeapi.dev/joke/Any')
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            var joke = data.joke || data.setup + ' ' + data.delivery;
+            var category = data.category || 'Unknown';
+
+            var noteContentTextArea = document.getElementById('note-content');
+            noteContentTextArea.value = joke + '\n\nCategory: ' + category;
+        })
+        .catch(function(error) {
+            console.log('An error occurred while fetching the random joke:', error);
+        });
+}
+
+document.getElementById('random-joke-button').addEventListener('click', function() {
+    getRandomJoke();
+});
+
+function getRandomAffirmation() {
+    fetch('https://www.affirmations.dev/')
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            var affirmation = data.affirmation || 'Unknown';
+
+            var noteContentTextArea = document.getElementById('note-content');
+            noteContentTextArea.value = affirmation;
+        })
+        .catch(function(error) {
+            console.log('An error occurred while fetching the random affirmation:', error);
+        });
+}
+
+document.getElementById('random-affirmation-button').addEventListener('click', function() {
+    getRandomAffirmation();
+});
