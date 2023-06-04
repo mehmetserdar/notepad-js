@@ -186,7 +186,7 @@ document.getElementById('random-quote-button').addEventListener('click', functio
 
 
 function getRandomJoke() {
-    fetch('https://v2.jokeapi.dev/joke/Any')
+    fetch('https://v2.jokeapi.dev/joke/Any?blacklistFlags=religious,racist')
         .then(function(response) {
             return response.json();
         })
