@@ -26,14 +26,19 @@ function createNoteItem(noteId, noteContent) {
     deleteButton.className = 'btn btn-danger btn-sm';
     deleteButton.innerHTML = 'Delete 🗑️';
     deleteButton.addEventListener('click', function() {
+        var confirmed = confirm('Are you sure you want to delete note?');
+        if (confirmed) {
         li.parentNode.removeChild(li);
         localStorage.removeItem(noteKeyPrefix + noteId);
         alert('Note deleted!');
+        }
     });
 
     document.getElementById('export-button').addEventListener('click', function() {
         exportNotesToCSV();
     });
+
+    
 
     var editDeleteContainer = document.createElement('div');
     editDeleteContainer.className = 'float-right';
@@ -117,7 +122,7 @@ function clearAllNotes() {
 window.addEventListener('DOMContentLoaded', function() {
     var userAgent = navigator.userAgent.toLowerCase();
     if (userAgent.includes('android')) {
-        var titleElement = document.getElementById('app-title');
+        var titleElement = document.getElementsByClassName('app-title');
         if (titleElement) {
             titleElement.style.display = 'none';
         }
