@@ -183,28 +183,28 @@ function exportNotesToCSV() {
   // Clean up the link element
   document.body.removeChild(link);
 }
-function getInfoAboutToday() {
-    var currentDate = new Date();
-    var today = currentDate.getMonth() + 1 + '/' + currentDate.getDate();
+// function getInfoAboutToday() {
+//     var currentDate = new Date();
+//     var today = currentDate.getMonth() + 1 + '/' + currentDate.getDate();
 
-    fetch('http://numbersapi.com/' + today + '/date')
-        .then(function(response) {
-            return response.text();
-        })
-        .then(function(data) {
-            var info = data || 'Unknown';
+//     fetch('http://numbersapi.com/' + today + '/date')
+//         .then(function(response) {
+//             return response.text();
+//         })
+//         .then(function(data) {
+//             var info = data || 'Unknown';
 
-            var noteContentTextArea = document.getElementById('note-content');
-            noteContentTextArea.value = info;
-        })
-        .catch(function(error) {
-            console.log('An error occurred while fetching information about today:', error);
-        });
-}
+//             var noteContentTextArea = document.getElementById('note-content');
+//             noteContentTextArea.value = info;
+//         })
+//         .catch(function(error) {
+//             console.log('An error occurred while fetching information about today:', error);
+//         });
+// }
 
-document.getElementById('today-info-button').addEventListener('click', function() {
-    getInfoAboutToday();
-});
+// document.getElementById('today-info-button').addEventListener('click', function() {
+//     getInfoAboutToday();
+// });
 
 
 
