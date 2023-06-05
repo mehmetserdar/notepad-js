@@ -34,10 +34,7 @@ function createNoteItem(noteId, noteContent) {
         }
     });
 
-    document.getElementById('export-button').addEventListener('click', function() {
-        exportNotesToCSV();
-    });
-
+    
     
 
     var editDeleteContainer = document.createElement('div');
@@ -74,6 +71,7 @@ document.getElementById('save-button').addEventListener('click', function() {
         alert('Note content cannot be empty!');
     }
 });
+
 
 window.addEventListener('DOMContentLoaded', function() {
     // Load all saved notes from local storage
@@ -129,38 +127,59 @@ window.addEventListener('DOMContentLoaded', function() {
 });
 
 
-function exportNotesToCSV() {
-    var csvContent = 'data:text/csv;charset=utf-8,';
-
-    // Add the CSV headers
-    var headers = ['ID', 'Note Content', 'Date'];
-    csvContent += headers.join(',') + '\n';
-
-    // Iterate through the notes and add them to the CSV content
+document.getElementById('export-button').addEventListener('click', function() {
+    exportNotesToCSV();
+  });
+  
+  function exportNotesToCSV() {
+    var notes = [];
+  
+    // Iterate through the notes and add them to the notes array
     for (var i = 0; i < localStorage.length; i++) {
-        var key = localStorage.key(i);
-        if (key.startsWith(noteKeyPrefix)) {
-            var noteId = key.substring(noteKeyPrefix.length);
-            var noteContent = localStorage.getItem(key);
-            var noteDate = getFormattedDate();
-            var rowData = [noteId, noteContent, noteDate];
-            csvContent += rowData.join(',') + '\n';
-        }
+      var key = localStorage.key(i);
+      if (key.startsWith(noteKeyPrefix)) {
+        var noteId = key.substring(noteKeyPrefix.length);
+        var noteContent = localStorage.getItem(key);
+        var rowData = [noteId, noteContent];
+        notes.push(rowData);
+      }
     }
-
+  
+    // Create the CSV content
+    var csvContent = "data:text/csv;charset=utf-8,";
+  
+    // Add the CSV headers
+    csvContent += "ID,Note Content\n";
+  
+    // Add the note rows to the CSV content
+    notes.forEach(function (note) {
+      var row = note.map(function (value) {
+        return value.replace(/,/g, ''); // Remove commas
+      });
+      csvContent += row.join(",") + "\n";
+    });
+  
     // Create a data URI for the CSV content
     var encodedURI = encodeURI(csvContent);
-
+  
     // Create a link element and set its attributes for downloading
-    var link = document.createElement('a');
-    link.setAttribute('href', encodedURI);
-    link.setAttribute('download', 'notes.csv');
-
-    // Append the link to the document and trigger the download
+    var link = document.createElement("a");
+    link.setAttribute("href", encodedURI);
+    link.setAttribute("download", "notes.csv");
+    link.style.display = "none";
+  
+    // Append the link to the document body
     document.body.appendChild(link);
+  
+    // Programmatically click the link to trigger the download
     link.click();
+  
+    // Clean up the link element
     document.body.removeChild(link);
-}
+  }
+  
+  
+  
 
 function getRandomQuote() {
     fetch('https://type.fit/api/quotes')
