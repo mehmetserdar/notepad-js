@@ -338,8 +338,8 @@ function getRandomJoke() {
       return response.json();
     })
     .then(function (data) {
-      var joke = data.joke || data.setup + " " + data.punchline;
-      var category = data.type || "Unknown";
+      var joke = data.joke || data.setup + " " + data.delivery;
+      var category = data.category || "Unknown";
 
       var noteContentTextArea = document.getElementById("note-content");
       noteContentTextArea.value = joke + "\n\nCategory: " + category;
