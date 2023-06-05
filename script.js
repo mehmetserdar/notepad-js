@@ -187,7 +187,7 @@ function getInfoAboutToday() {
     var currentDate = new Date();
     var today = currentDate.getMonth() + 1 + '/' + currentDate.getDate();
 
-    fetch('http://numbersapi.com/' + today + '/date')
+    fetch('https://numbersapi.com/' + today + '/date')
         .then(function(response) {
             return response.text();
         })
@@ -283,7 +283,7 @@ document.getElementById('random-country-button').addEventListener('click', funct
 
 
 function getRandomActivity() {
-  fetch("http://www.boredapi.com/api/activity/")
+  fetch("https://www.boredapi.com/api/activity/")
     .then(function (response) {
       return response.json();
     })
