@@ -333,7 +333,7 @@ document
   });
 
 function getRandomJoke() {
-  fetch("https://v2.jokeapi.dev/joke/Any?blacklistFlags=religious,racist")
+  fetch("https://v2.jokeapi.dev/joke/Any?blacklistFlags=religious,racist,sexist,explicit,nsfw")
     .then(function (response) {
       return response.json();
     })
