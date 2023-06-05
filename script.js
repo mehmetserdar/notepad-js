@@ -187,7 +187,7 @@ function getInfoAboutToday() {
     var currentDate = new Date();
     var today = currentDate.getMonth() + 1 + '/' + currentDate.getDate();
 
-    fetch('https://numbersapi.com/' + today + '/date')
+    fetch('http://numbersapi.com/' + today + '/date')
         .then(function(response) {
             return response.text();
         })
