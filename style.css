@@ -1,3 +1,56 @@
+:root {
+  --danger-color: #ff9999; /* Pastel Red */
+  --success-color: #99ff99; /* Pastel Green */
+  --primary-color: #759af9; /* Pastel Blue */
+  --warning-color: #f2c84a; /* Pastel Yellow */
+  --secondary-color: #979797; /* Pastel Orange */
+  --info-color: #66daca; /* Pastel Purple */
+  --dark-color: #ffcc99; /* Pastel Dark */
+}
+
+/* Example usage on Bootstrap buttons */
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: #fff;
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+  color: #fff;
+}
+
+.btn-success {
+  background-color: var(--success-color);
+  border-color: var(--success-color);
+  color: #fff;
+}
+
+.btn-warning {
+  background-color: var(--warning-color);
+  border-color: var(--warning-color);
+  color: #fff;
+}
+
+.btn-danger {
+  background-color: var(--danger-color);
+  border-color: var(--danger-color);
+  color: #fff;
+}
+
+.btn-info {
+  background-color: var(--info-color);
+  border-color: var(--info-color);
+  color: #fff;
+}
+
+.btn-dark {
+  background-color: var(--dark-color);
+  border-color: var(--dark-color);
+  color: #fff;
+}
+
 .list-group-item {
     position: relative;
 }
@@ -36,4 +89,37 @@
     border-bottom-right-radius: .25rem ;
     border-top-right-radius: 0 ;
     border-top-left-radius: 0 ;
+}
+
+/* Add a class to style the note item */
+.note-item {
+  /* Add your desired styles for the note item */
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+/* Style the color picker */
+#note-color {
+  width: 50px;
+  height: 30px;
+  vertical-align: middle;
+  margin-left: 10px;
+}
+
+.color-buttons {
+  display: flex;
+}
+
+.color-button {
+  width: 30px;
+  height: 30px;
+  border: 1px solid lightgray;
+  margin-right: 5px;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+
+.form-group {
+  margin-bottom: 15px;
 }

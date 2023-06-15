@@ -1,13 +1,16 @@
 var noteKeyPrefix = "note_";
+var colorButtons = document.getElementsByClassName("color-button");
 
-function createNoteItem(noteId, noteContent) {
+function handleColorButtonClick(event) {
+  var color = event.target.getAttribute("data-color");
+  updateNoteColor(color);
+}
+
+function createNoteItem(noteId, noteContent, noteColor) {
   var li = document.createElement("li");
   li.className = "list-group-item";
   li.id = noteId; // Assign the unique ID to the note item
-
-  var noteDate = document.createElement("span");
-  noteDate.className = "note-date mr-2";
-  noteDate.innerHTML = getFormattedDate();
+  li.style.backgroundColor = noteColor; // Set the note item background color
 
   var noteContentElement = document.createElement("span");
   noteContentElement.className = "note-content";
@@ -15,8 +18,8 @@ function createNoteItem(noteId, noteContent) {
   li.appendChild(noteContentElement);
 
   var editButton = document.createElement("button");
-  editButton.className = "btn btn-secondary btn-sm mr-2";
-  editButton.innerHTML = "Edit 📝";
+  editButton.className = "btn btn-info btn-sm mr-2";
+  editButton.innerHTML = "Edit";
   editButton.addEventListener("click", function () {
     document.getElementById("note-content").value = noteContent;
     document
@@ -26,14 +29,11 @@ function createNoteItem(noteId, noteContent) {
 
   var deleteButton = document.createElement("button");
   deleteButton.className = "btn btn-danger btn-sm";
-  deleteButton.innerHTML = "Delete 🗑️";
+  deleteButton.innerHTML = "Delete";
   deleteButton.addEventListener("click", function () {
-    var confirmed = confirm("Are you sure you want to delete note?");
-    if (confirmed) {
-      li.parentNode.removeChild(li);
-      localStorage.removeItem(noteKeyPrefix + noteId);
-      alert("Note deleted!");
-    }
+    li.parentNode.removeChild(li);
+    localStorage.removeItem(noteKeyPrefix + noteId);
+    alert("Note deleted!");
   });
 
   var editDeleteContainer = document.createElement("div");
@@ -46,25 +46,53 @@ function createNoteItem(noteId, noteContent) {
   return li;
 }
 
+function updateNoteColor(color) {
+  var noteItem = document.getElementById("note-content");
+  noteItem.style.backgroundColor = color;
+  var noteId = noteItem.getAttribute("data-note-id");
+  if (noteId) {
+    var noteData = JSON.parse(localStorage.getItem(noteKeyPrefix + noteId));
+    noteData.color = color;
+    localStorage.setItem(noteKeyPrefix + noteId, JSON.stringify(noteData));
+  }
+}
+
+for (var i = 0; i < colorButtons.length; i++) {
+  colorButtons[i].addEventListener("click", handleColorButtonClick);
+}
+
 document.getElementById("save-button").addEventListener("click", function () {
   var noteContent = document.getElementById("note-content").value;
   if (noteContent.trim() !== "") {
     var noteId = document
       .getElementById("note-content")
       .getAttribute("data-note-id");
+    var noteColor =
+      document.getElementById("note-content").style.backgroundColor;
     if (noteId) {
       // Update existing note
       var noteItem = document.getElementById(noteId);
       noteItem.querySelector(".note-content").innerHTML = noteContent;
-      localStorage.setItem(noteKeyPrefix + noteId, noteContent);
+      updateNoteColor(noteId, noteColor);
+      localStorage.setItem(
+        noteKeyPrefix + noteId,
+        JSON.stringify({ content: noteContent, color: noteColor })
+      );
       alert("Note updated successfully!");
+      // Refresh the page
+      location.reload();
     } else {
       // Create new note
       noteId = Date.now(); // Generate a unique ID for the note
-      var noteItem = createNoteItem(noteId, noteContent);
+      var noteItem = createNoteItem(noteId, noteContent, noteColor);
       document.getElementById("note-list").appendChild(noteItem);
-      localStorage.setItem(noteKeyPrefix + noteId, noteContent);
+      localStorage.setItem(
+        noteKeyPrefix + noteId,
+        JSON.stringify({ content: noteContent, color: noteColor })
+      );
       alert("Note saved successfully!");
+      // Refresh the page
+      location.reload();
     }
     document.getElementById("note-content").value = "";
     document.getElementById("note-content").removeAttribute("data-note-id");
@@ -73,15 +101,21 @@ document.getElementById("save-button").addEventListener("click", function () {
   }
 });
 
-window.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
   // Load all saved notes from local storage
   for (var i = 0; i < localStorage.length; i++) {
     var key = localStorage.key(i);
     if (key.startsWith(noteKeyPrefix)) {
-      var noteId = key.substring(noteKeyPrefix.length);
-      var noteContent = localStorage.getItem(key);
-      var noteItem = createNoteItem(noteId, noteContent);
-      document.getElementById("note-list").appendChild(noteItem);
+      try {
+        var noteId = key.substring(noteKeyPrefix.length);
+        var noteData = JSON.parse(localStorage.getItem(key));
+        var noteContent = noteData.content;
+        var noteColor = noteData.color || "#ffffff"; // Default color if not set
+        var noteItem = createNoteItem(noteId, noteContent, noteColor);
+        document.getElementById("note-list").appendChild(noteItem);
+      } catch (error) {
+        console.error("Error parsing note data:", error);
+      }
     }
   }
 });
@@ -134,55 +168,70 @@ window.addEventListener("DOMContentLoaded", function () {
 });
 
 document.getElementById("export-button").addEventListener("click", function () {
-  exportNotesToCSV();
+  exportNotes();
 });
 
-function exportNotesToCSV() {
-  var notes = [];
-
-  // Iterate through the notes and add them to the notes array
-  for (var i = 0; i < localStorage.length; i++) {
-    var key = localStorage.key(i);
-    if (key.startsWith(noteKeyPrefix)) {
-      var noteId = key.substring(noteKeyPrefix.length);
-      var noteContent = localStorage.getItem(key);
-      var rowData = [noteId, noteContent];
-      notes.push(rowData);
-    }
+function exportNotes() {
+  var allNotes = "";
+  var noteList = document.getElementById("note-list").children;
+  for (var i = 0; i < noteList.length; i++) {
+    var noteContent = noteList[i].querySelector(".note-content").innerText;
+    allNotes += noteContent + "\n";
   }
-
-  // Create the CSV content
-  var csvContent = "data:text/csv;charset=utf-8,";
-
-  // Add the CSV headers
-  csvContent += "ID,Note Content\n";
-
-  // Add the note rows to the CSV content
-  notes.forEach(function (note) {
-    var row = note.map(function (value) {
-      return value.replace(/,/g, ""); // Remove commas
-    });
-    csvContent += row.join(",") + "\n";
-  });
-
-  // Create a data URI for the CSV content
-  var encodedURI = encodeURI(csvContent);
-
-  // Create a link element and set its attributes for downloading
+  var blob = new Blob([allNotes], { type: "text/plain" });
+  var url = URL.createObjectURL(blob);
   var link = document.createElement("a");
-  link.setAttribute("href", encodedURI);
-  link.setAttribute("download", "notes.csv");
-  link.style.display = "none";
-
-  // Append the link to the document body
-  document.body.appendChild(link);
-
-  // Programmatically click the link to trigger the download
+  link.href = url;
+  link.download = "notes.txt";
   link.click();
-
-  // Clean up the link element
-  document.body.removeChild(link);
 }
+
+// function exportNotesToCSV() {
+//   var notes = [];
+
+//   // Iterate through the notes and add them to the notes array
+//   for (var i = 0; i < localStorage.length; i++) {
+//     var key = localStorage.key(i);
+//     if (key.startsWith(noteKeyPrefix)) {
+//       var noteId = key.substring(noteKeyPrefix.length);
+//       var noteContent = localStorage.getItem(key);
+//       var rowData = [noteId, noteContent];
+//       notes.push(rowData);
+//     }
+//   }
+
+//   // Create the CSV content
+//   var csvContent = "data:text/csv;charset=utf-8,";
+
+//   // Add the CSV headers
+//   csvContent += "ID,Note Content\n,Date,Color";
+
+//   // Add the note rows to the CSV content
+//   notes.forEach(function (note) {
+//     var row = note.map(function (value) {
+//       return value.replace(/,/g, ""); // Remove commas
+//     });
+//     csvContent += row.join(",") + "\n";
+//   });
+
+//   // Create a data URI for the CSV content
+//   var encodedURI = encodeURI(csvContent);
+
+//   // Create a link element and set its attributes for downloading
+//   var link = document.createElement("a");
+//   link.setAttribute("href", encodedURI);
+//   link.setAttribute("download", "notes.csv");
+//   link.style.display = "none";
+
+//   // Append the link to the document body
+//   document.body.appendChild(link);
+
+//   // Programmatically click the link to trigger the download
+//   link.click();
+
+//   // Clean up the link element
+//   document.body.removeChild(link);
+// }
 // function getInfoAboutToday() {
 //     var currentDate = new Date();
 //     var today = currentDate.getMonth() + 1 + '/' + currentDate.getDate();
@@ -206,81 +255,101 @@ function exportNotesToCSV() {
 //     getInfoAboutToday();
 // });
 
-
-
 function getRandomRecipe() {
-    fetch('https://www.themealdb.com/api/json/v1/1/random.php')
-        .then(function(response) {
-            return response.json();
-        })
-        .then(function(data) {
-            var recipe = data.meals[0];
-            var recipeName = recipe.strMeal || 'Unknown';
-            var recipeCategory = recipe.strCategory || 'Unknown';
-            var recipeArea = recipe.strArea || 'Unknown';
-            var recipeInstructions = recipe.strInstructions || 'Unknown';
+  fetch("https://www.themealdb.com/api/json/v1/1/random.php")
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      var recipe = data.meals[0];
+      var recipeName = recipe.strMeal || "Unknown";
+      var recipeCategory = recipe.strCategory || "Unknown";
+      var recipeArea = recipe.strArea || "Unknown";
+      var recipeInstructions = recipe.strInstructions || "Unknown";
 
-            var ingredients = [];
-            // Collect up to 20 ingredients
-            for (let i = 1; i <= 20; i++) {
-                var ingredient = recipe['strIngredient' + i];
-                var measure = recipe['strMeasure' + i];
-                if (ingredient && measure) {
-                    ingredients.push(measure + ' ' + ingredient);
-                }
-            }
+      var ingredients = [];
+      // Collect up to 20 ingredients
+      for (let i = 1; i <= 20; i++) {
+        var ingredient = recipe["strIngredient" + i];
+        var measure = recipe["strMeasure" + i];
+        if (ingredient && measure) {
+          ingredients.push(measure + " " + ingredient);
+        }
+      }
 
-            var recipeInfo = 'Recipe: ' + recipeName + '\n' +
-                             'Category: ' + recipeCategory + '\n' +
-                             'Area: ' + recipeArea + '\n\n' +
-                             'Ingredients:\n' + ingredients.join('\n') + '\n\n' +
-                             'Instructions:\n' + recipeInstructions;
+      var recipeInfo =
+        "Recipe: " +
+        recipeName +
+        "\n" +
+        "Category: " +
+        recipeCategory +
+        "\n" +
+        "Area: " +
+        recipeArea +
+        "\n\n" +
+        "Ingredients:\n" +
+        ingredients.join("\n") +
+        "\n\n" +
+        "Instructions:\n" +
+        recipeInstructions;
 
-            var noteContentTextArea = document.getElementById('note-content');
-            noteContentTextArea.value = recipeInfo;
-        })
-        .catch(function(error) {
-            console.log('An error occurred while fetching the random recipe:', error);
-        });
+      var noteContentTextArea = document.getElementById("note-content");
+      noteContentTextArea.value = recipeInfo;
+    })
+    .catch(function (error) {
+      console.log("An error occurred while fetching the random recipe:", error);
+    });
 }
 
-document.getElementById('random-recipe-button').addEventListener('click', function() {
+document
+  .getElementById("random-recipe-button")
+  .addEventListener("click", function () {
     getRandomRecipe();
-});
-
-
+  });
 
 function getRandomCountryInfo() {
-    fetch('https://restcountries.com/v3.1/all')
-        .then(function(response) {
-            return response.json();
-        })
-        .then(function(data) {
-            var randomIndex = Math.floor(Math.random() * data.length);
-            var country = data[randomIndex];
+  fetch("https://restcountries.com/v3.1/all")
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      var randomIndex = Math.floor(Math.random() * data.length);
+      var country = data[randomIndex];
 
-            var countryName = country.name.common || 'Unknown';
-            var countryCapital = country.capital || 'Unknown';
-            var countryPopulation = country.population || 'Unknown';
-            var countryRegion = country.region || 'Unknown';
+      var countryName = country.name.common || "Unknown";
+      var countryCapital = country.capital || "Unknown";
+      var countryPopulation = country.population || "Unknown";
+      var countryRegion = country.region || "Unknown";
 
-            var countryInfo = 'Country: ' + countryName + '\n' +
-                              'Capital: ' + countryCapital + '\n' +
-                              'Population: ' + countryPopulation + '\n' +
-                              'Region: ' + countryRegion;
+      var countryInfo =
+        "Country: " +
+        countryName +
+        "\n" +
+        "Capital: " +
+        countryCapital +
+        "\n" +
+        "Population: " +
+        countryPopulation +
+        "\n" +
+        "Region: " +
+        countryRegion;
 
-            var noteContentTextArea = document.getElementById('note-content');
-            noteContentTextArea.value = countryInfo;
-        })
-        .catch(function(error) {
-            console.log('An error occurred while fetching random country information:', error);
-        });
+      var noteContentTextArea = document.getElementById("note-content");
+      noteContentTextArea.value = countryInfo;
+    })
+    .catch(function (error) {
+      console.log(
+        "An error occurred while fetching random country information:",
+        error
+      );
+    });
 }
 
-document.getElementById('random-country-button').addEventListener('click', function() {
+document
+  .getElementById("random-country-button")
+  .addEventListener("click", function () {
     getRandomCountryInfo();
-});
-
+  });
 
 function getRandomActivity() {
   fetch("https://www.boredapi.com/api/activity/")
@@ -325,7 +394,6 @@ function getRandomQuote() {
     });
 }
 
-
 document
   .getElementById("random-quote-button")
   .addEventListener("click", function () {
@@ -333,7 +401,9 @@ document
   });
 
 function getRandomJoke() {
-  fetch("https://v2.jokeapi.dev/joke/Any?blacklistFlags=religious,racist,sexist,explicit,nsfw")
+  fetch(
+    "https://v2.jokeapi.dev/joke/Any?blacklistFlags=religious,racist,sexist,explicit,nsfw"
+  )
     .then(function (response) {
       return response.json();
     })
