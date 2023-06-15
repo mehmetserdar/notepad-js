@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="apple-touch-icon" sizes="180x180" href="./web/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="./web/favicon.ico">
-    <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="manifest" href="manifest.json">    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
 
     <title>Simple Notepad App</title>
@@ -20,30 +20,45 @@
             <div class="col-md-8 ">
                 <div class="row">
                     <div class="col-md-8">
-                        <textarea id="note-content" class="form-control mt-3" rows="5" placeholder="Take a note..."></textarea>
+                        <textarea id="note-content" class="form-control mt-3" rows="5"
+                            placeholder="Take a note..."></textarea>
                     </div>
                     <div class="col-md-4 pt-2">
                         <div class="form-group">
                             <div id="color-buttons" class="color-buttons pt-2">
-                                <button class="color-button" data-color="#ffffff" style="background-color: #ffffff;"></button>
-                                <button class="color-button" data-color="#ff9999" style="background-color: #ff9999;"></button>
-                                <button class="color-button" data-color="#99ff99" style="background-color: #99ff99;"></button>
-                                <button class="color-button" data-color="#9999ff" style="background-color: #9999ff;"></button>
-                                <button class="color-button" data-color="#ffff99" style="background-color: #ffff99;"></button>
-                                <button class="color-button" data-color="#ffcc99" style="background-color: #ffcc99;"></button> <!-- New color -->
+                                <button class="color-button" data-color="#ffffff"
+                                    style="background-color: #ffffff;"></button>
+                                <button class="color-button" data-color="#ff9999"
+                                    style="background-color: #ff9999;"></button>
+                                <button class="color-button" data-color="#99ff99"
+                                    style="background-color: #99ff99;"></button>
+                                <button class="color-button" data-color="#9999ff"
+                                    style="background-color: #9999ff;"></button>
+                                <button class="color-button" data-color="#ffff99"
+                                    style="background-color: #ffff99;"></button>
+                                <button class="color-button" data-color="#ffcc99"
+                                    style="background-color: #ffcc99;"></button> <!-- New color -->
 
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                
+
+
             </div>
+
+            <div class="form-group">
+
+            </div>
+
+
             <div class="col-md-4">
                 <button id="save-button" class="btn btn-primary mt-3">Save 💾</button>
                 <button id="clear-button" class="btn btn-danger mt-3">Clear All🗑️</button>
                 <button id="export-button" class="btn btn-info mt-3">Export 📁</button>
-               
+
+
+
                 <button id="random-quote-button" class="btn btn-warning mt-3">Inspirational Quote 🎲</button>
                 <button id="random-joke-button" class="btn btn-warning mt-3">Funny Jokes 🎲</button>
                 <!-- <button id="today-info-button" class="btn btn-secondary mt-3">Today in History 🎲</button>  -->
@@ -52,6 +67,9 @@
                 <button id="random-recipe-button" class="btn btn-warning mt-3">Feeling hungry? 🎲</button>
                 <button id="random-activity-button" class="btn btn-warning mt-3">Are you bored? 🎲</button>
 
+                <button id="feeling-button" class="btn btn-primary mt-3">I am feeling...</button>
+
+
 
 
             </div>
@@ -59,13 +77,37 @@
         <div class="row mt-5">
             <div class="col-md-12">
                 <h3>Notes 🗒️</h3>
-                
+
 
                 <ul id="note-list" class="list-group"></ul>
             </div>
         </div>
     </div>
 
+    <!-- Modal -->
+  <div class="modal fade" id="feeling-modal" tabindex="-1" role="dialog" aria-labelledby="feeling-modal-label"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="feeling-modal-label">How are you feeling today?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <button class="btn btn-primary feeling-choice mt-1">Happy</button>
+        <button class="btn btn-primary feeling-choice mt-1">Sad</button>
+        <button class="btn btn-primary feeling-choice mt-1">Excited</button>
+        <button class="btn btn-primary feeling-choice mt-1">Angry</button>
+        <button class="btn btn-primary feeling-choice mt-1">Calm</button>
+        <!-- Add more options as needed -->
+      </div>
+    </div>
+  </div>
+</div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="script.js"></script>
 </body>
 

@@ -1,9 +1,27 @@
 var noteKeyPrefix = "note_";
 var colorButtons = document.getElementsByClassName("color-button");
+var feelingButton = document.getElementById('feeling-button');
+var feelingModal = document.getElementById('feeling-modal');
+var feelingChoices = document.getElementsByClassName('feeling-choice');
 
 function handleColorButtonClick(event) {
   var color = event.target.getAttribute("data-color");
   updateNoteColor(color);
+}
+
+// Attach event listener to feeling button
+feelingButton.addEventListener('click', function() {
+  $('#feeling-modal').modal('show');
+});
+
+// Attach event listeners to feeling choices
+for (var i = 0; i < feelingChoices.length; i++) {
+  feelingChoices[i].addEventListener('click', function() {
+    var feelingChoice = this.innerText;
+    var today = new Date().toLocaleDateString();
+    document.getElementById('note-content').value = "I'm " + feelingChoice.toLowerCase() + " (" + today + ")";
+    $('#feeling-modal').modal('hide');
+  });
 }
 
 function createNoteItem(noteId, noteContent, noteColor) {
