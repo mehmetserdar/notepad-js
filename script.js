@@ -71,8 +71,8 @@ function createNoteItem(noteId, noteContent, noteColor) {
   li.appendChild(noteContentElement);
 
   var editButton = document.createElement("button");
-  editButton.className = "btn btn-info btn-sm mr-2";
-  editButton.innerHTML = "Edit";
+  editButton.className = "btn btn-edit btn-sm mr-2";
+  editButton.innerHTML = "Edit ✏️";
   editButton.addEventListener("click", function () {
     document.getElementById("note-content").value = noteContent;
     document
@@ -81,8 +81,8 @@ function createNoteItem(noteId, noteContent, noteColor) {
   });
 
   var deleteButton = document.createElement("button");
-  deleteButton.className = "btn btn-danger btn-sm";
-  deleteButton.innerHTML = "Delete";
+  deleteButton.className = "btn btn-edit btn-sm";
+  deleteButton.innerHTML = "Delete ❌";
   deleteButton.addEventListener("click", function () {
     li.parentNode.removeChild(li);
     localStorage.removeItem(noteKeyPrefix + noteId);

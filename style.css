@@ -1,17 +1,19 @@
 :root {
-  --danger-color: #ff9999; /* Pastel Red */
-  --success-color: #99ff99; /* Pastel Green */
-  --primary-color: #759af9; /* Pastel Blue */
-  --warning-color: #f2c84a; /* Pastel Yellow */
-  --secondary-color: #979797; /* Pastel Orange */
-  --info-color: #66daca; /* Pastel Purple */
+  --danger-color: #EF9A9A; /* Pastel Red */
+  --success-color: #A5D6A7; /* Pastel Green */
+  --primary-color: #81D4FA; /* Pastel Blue */
+  --warning-color: #FFD54F; /* Pastel Yellow */
+  --new-color: #B39DDB; /* Pastel Orange */
+  --info-color: #80CBC4; /* Pastel Purple */
   --dark-color: #ffcc99; /* Pastel Dark */
+  --edit-color: #E0E0E0; /* Pastel Dark */
+  --delete-color: #F4511E; /* Pastel Dark */
 }
 
 /* Example usage on Bootstrap buttons */
 .btn-primary {
   background-color: var(--primary-color);
-  border-color: var(--primary-color);
+  border-color: #29B6F6;
   color: #fff;
 }
 
@@ -23,31 +25,47 @@
 
 .btn-success {
   background-color: var(--success-color);
-  border-color: var(--success-color);
+  border-color: #66BB6A;
   color: #fff;
 }
 
 .btn-warning {
   background-color: var(--warning-color);
-  border-color: var(--warning-color);
+  border-color: #FFC107;
   color: #fff;
 }
 
 .btn-danger {
   background-color: var(--danger-color);
-  border-color: var(--danger-color);
+  border-color: #EF5350;
   color: #fff;
 }
 
 .btn-info {
   background-color: var(--info-color);
-  border-color: var(--info-color);
+  border-color: #26A69A;
   color: #fff;
 }
 
-.btn-dark {
-  background-color: var(--dark-color);
-  border-color: var(--dark-color);
+
+.btn-new {
+  background-color: var(--new-color);
+  border-color: #7E57C2;
+  color: #fff;
+}
+.btn-new:hover {
+  background-color: #5E35B1;  
+  color: #fff;
+}
+
+.btn-edit {
+  background-color: var(--edit-color);
+  border-color: #BDBDBD;
+  color: #000;
+}
+.btn-edit:hover {
+  background-color: #757575;
+  border-color: #757575;
   color: #fff;
 }
 
@@ -110,8 +128,8 @@
 }
 
 .color-button {
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
   border: 1px solid lightgray;
   margin-right: 5px;
   cursor: pointer;
