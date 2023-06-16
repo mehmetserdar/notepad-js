@@ -73,10 +73,9 @@
   
   #note-list {
     display: flex;
-    flex-direction: column-reverse;
   }
 
-  .list-group-item:last-child {
+  .list-group-item:first-child {
     margin-top: 0 ;
     border-top-right-radius: .25rem ;
     border-top-left-radius: .25rem ;
@@ -84,7 +83,7 @@
     border-bottom-left-radius: 0;
 }
 
-.list-group-item:first-child {
+.list-group-item:last-child {
     border-bottom-left-radius: .25rem ;
     border-bottom-right-radius: .25rem ;
     border-top-right-radius: 0 ;

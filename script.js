@@ -3,10 +3,44 @@ var colorButtons = document.getElementsByClassName("color-button");
 var feelingButton = document.getElementById('feeling-button');
 var feelingModal = document.getElementById('feeling-modal');
 var feelingChoices = document.getElementsByClassName('feeling-choice');
+var importButton = document.getElementById('import-button');
+var exportButton = document.getElementById('export-button');
+var importFile = document.getElementById('import-file');
 
 function handleColorButtonClick(event) {
   var color = event.target.getAttribute("data-color");
   updateNoteColor(color);
+}
+
+// Generate a unique note ID
+function generateNoteId() {
+  return 'note_' + Date.now();
+}
+
+// Function to convert RGB color to hex color
+function rgbToHex(rgb) {
+  try {
+    // Remove whitespace and extract the RGB values
+    var rgbValues = rgb.replace(/\s/g, '').match(/^rgb\((\d+),(\d+),(\d+)\)$/);
+
+    // Check if RGB values are valid
+    if (rgbValues && rgbValues.length === 4) {
+      var r = parseInt(rgbValues[1]);
+      var g = parseInt(rgbValues[2]);
+      var b = parseInt(rgbValues[3]);
+
+      // Convert each RGB component to hex
+      var hex = '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+
+      return hex;
+    } else {
+      // Return default hex color (#ffffff) if RGB format is invalid or empty
+      return '#ffffff';
+    }
+  } catch (error) {
+    console.error('Error converting RGB to hex:', error);
+    return '#ffffff';
+  }
 }
 
 // Attach event listener to feeling button
@@ -29,6 +63,7 @@ function createNoteItem(noteId, noteContent, noteColor) {
   li.className = "list-group-item";
   li.id = noteId; // Assign the unique ID to the note item
   li.style.backgroundColor = noteColor; // Set the note item background color
+  noteColor = rgbToHex(noteColor);
 
   var noteContentElement = document.createElement("span");
   noteContentElement.className = "note-content";
@@ -67,6 +102,9 @@ function createNoteItem(noteId, noteContent, noteColor) {
 function updateNoteColor(color) {
   var noteItem = document.getElementById("note-content");
   noteItem.style.backgroundColor = color;
+  var noteColor =
+      document.getElementById("note-content").style.backgroundColor;
+  noteColor = rgbToHex(noteColor);
   var noteId = noteItem.getAttribute("data-note-id");
   if (noteId) {
     var noteData = JSON.parse(localStorage.getItem(noteKeyPrefix + noteId));
@@ -80,13 +118,15 @@ for (var i = 0; i < colorButtons.length; i++) {
 }
 
 document.getElementById("save-button").addEventListener("click", function () {
-  var noteContent = document.getElementById("note-content").value;
+  var noteContent = document.getElementById("note-content").value.trim(); // Trim leading and trailing whitespace
+  ;
   if (noteContent.trim() !== "") {
     var noteId = document
       .getElementById("note-content")
       .getAttribute("data-note-id");
     var noteColor =
       document.getElementById("note-content").style.backgroundColor;
+      noteColor = rgbToHex(noteColor);
     if (noteId) {
       // Update existing note
       var noteItem = document.getElementById(noteId);
@@ -118,6 +158,131 @@ document.getElementById("save-button").addEventListener("click", function () {
     alert("Note content cannot be empty!");
   }
 });
+
+// Function to export notes as CSV
+function exportNotesAsCSV() {
+  var csvContent = '';
+
+  // Add the CSV header
+  var header = ["NoteId", "NoteContent", "NoteColor"];
+  csvContent += header.join(",") + "\n";
+
+  // Iterate over the notes and add them to the CSV content
+  for (var i = 0; i < localStorage.length; i++) {
+    var key = localStorage.key(i);
+    if (key.startsWith(noteKeyPrefix)) {
+      var noteId = key.substring(noteKeyPrefix.length);
+      var noteData = JSON.parse(localStorage.getItem(key));
+      var noteContent = noteData.content;
+      var noteColor = noteData.color || '#ffffff'; // Default color if not set
+
+      // Convert RGB color value to hex
+
+      var row = [noteId, noteContent, noteColor];
+
+      csvContent += '"' + row.join('","') + '"\n';
+    }
+  }
+
+  // Create a Blob object with the CSV content
+  var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+
+  // Create a link element and set the Blob object as its href
+  var link = document.createElement("a");
+  link.setAttribute("href", URL.createObjectURL(blob));
+  link.setAttribute("download", "notes.csv");
+  document.body.appendChild(link);
+
+  // Trigger the click event to download the CSV file
+  link.click();
+  document.body.removeChild(link);
+}
+// Function to import notes from CSV
+function importNotesFromCSV(file) {
+  return new Promise(function(resolve, reject) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var importedData = e.target.result;
+      if (importedData) {
+        var rows = importedData.split(/\r?\n/);
+        var importedNotes = [];
+        for (var i = 1; i < rows.length; i++) {
+          var row = rows[i].trim();
+          if (row !== '') {
+            var cells = row.split(",");
+            var noteId = cells[0].replace(/"/g, '');
+            var noteContent = cells[1].replace(/"/g, '');
+            var noteColor = cells[2].replace(/"/g, '');
+            importedNotes.push({ id: noteId, content: noteContent, color: noteColor });
+          }
+        }
+        resolve(importedNotes);
+      } else {
+        reject(new Error('No data found in the CSV file.'));
+      }
+    };
+    reader.onerror = function() {
+      reject(new Error('Error occurred while reading the CSV file.'));
+    };
+    reader.readAsText(file);
+  });
+};
+
+
+
+// Attach event listener to export button
+exportButton.addEventListener('click', function() {
+  exportNotesAsCSV();
+});
+
+// Attach event listener to import button
+importButton.addEventListener('click', function() {
+  importFile.click();
+});
+
+
+
+// Function to save note to local storage
+function saveNoteToLocalStorage(noteId, noteContent, noteColor) {
+  return new Promise(function(resolve) {
+    var noteData = {
+      content: noteContent,
+      color: noteColor,
+    };
+    localStorage.setItem(noteKeyPrefix + noteId, JSON.stringify(noteData));
+    resolve();
+  });
+};
+
+
+
+
+// Attach event listener to import file input
+importFile.addEventListener('change', function(event) {
+  var file = event.target.files[0];
+  importNotesFromCSV(file)
+    .then(function(importedNotes) {
+      // Import notes
+      importedNotes.forEach(function(note) {
+        var noteId = note.id;
+        var noteContent = note.content;
+        var noteColor = note.color;
+        var noteItem = createNoteItem(noteId, noteContent, noteColor);
+        document.getElementById('note-list').appendChild(noteItem);
+        saveNoteToLocalStorage(noteId, noteContent, noteColor).then(function() {
+          console.log('Note imported and saved:', noteContent);
+        });
+      });
+      console.log('All notes imported successfully.');
+    })
+    .catch(function(error) {
+      console.error('Error importing notes:', error);
+    });
+});
+
+
+
+
 
 document.addEventListener("DOMContentLoaded", function () {
   // Load all saved notes from local storage
@@ -160,20 +325,49 @@ document.getElementById("clear-button").addEventListener("click", function () {
 });
 
 function clearAllNotes() {
-  // Clear all notes from local storage
+  // Clear all notes from the note list
+  var noteList = document.getElementById('note-list');
+  noteList.innerHTML = '';
+
+  // Retrieve all note keys with the "note_" prefix
+  var noteKeys = [];
   for (var i = 0; i < localStorage.length; i++) {
     var key = localStorage.key(i);
     if (key.startsWith(noteKeyPrefix)) {
-      localStorage.removeItem(key);
+      noteKeys.push(key);
     }
   }
 
-  // Clear all note items from the list
-  var noteList = document.getElementById("note-list");
-  while (noteList.firstChild) {
-    noteList.removeChild(noteList.firstChild);
-  }
+  // Asynchronously remove notes from local storage
+  var removalPromises = noteKeys.map(function(key) {
+    return new Promise(function(resolve) {
+      localStorage.removeItem(key);
+      resolve();
+    });
+  });
+
+  // Wait for all removal promises to resolve
+  Promise.all(removalPromises).then(function() {
+    console.log('All notes cleared successfully.');
+    // Perform any additional actions after all notes are cleared
+  });
 }
+
+
+// function clearAllNotes() {
+//   // Clear all notes from local storage
+//   for (var i = 0; i < localStorage.length; i++) {
+//     var key = localStorage.key(i);
+//     if (key.startsWith(noteKeyPrefix)) {
+//       localStorage.removeItem(key);
+//     }
+//   }
+
+//   // Clear all notes from the note list
+//   var noteList = document.getElementById('note-list');
+//   noteList.innerHTML = '';
+
+// }
 
 window.addEventListener("DOMContentLoaded", function () {
   var userAgent = navigator.userAgent.toLowerCase();
@@ -185,71 +379,6 @@ window.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-document.getElementById("export-button").addEventListener("click", function () {
-  exportNotes();
-});
-
-function exportNotes() {
-  var allNotes = "";
-  var noteList = document.getElementById("note-list").children;
-  for (var i = 0; i < noteList.length; i++) {
-    var noteContent = noteList[i].querySelector(".note-content").innerText;
-    allNotes += noteContent + "\n";
-  }
-  var blob = new Blob([allNotes], { type: "text/plain" });
-  var url = URL.createObjectURL(blob);
-  var link = document.createElement("a");
-  link.href = url;
-  link.download = "notes.txt";
-  link.click();
-}
-
-// function exportNotesToCSV() {
-//   var notes = [];
-
-//   // Iterate through the notes and add them to the notes array
-//   for (var i = 0; i < localStorage.length; i++) {
-//     var key = localStorage.key(i);
-//     if (key.startsWith(noteKeyPrefix)) {
-//       var noteId = key.substring(noteKeyPrefix.length);
-//       var noteContent = localStorage.getItem(key);
-//       var rowData = [noteId, noteContent];
-//       notes.push(rowData);
-//     }
-//   }
-
-//   // Create the CSV content
-//   var csvContent = "data:text/csv;charset=utf-8,";
-
-//   // Add the CSV headers
-//   csvContent += "ID,Note Content\n,Date,Color";
-
-//   // Add the note rows to the CSV content
-//   notes.forEach(function (note) {
-//     var row = note.map(function (value) {
-//       return value.replace(/,/g, ""); // Remove commas
-//     });
-//     csvContent += row.join(",") + "\n";
-//   });
-
-//   // Create a data URI for the CSV content
-//   var encodedURI = encodeURI(csvContent);
-
-//   // Create a link element and set its attributes for downloading
-//   var link = document.createElement("a");
-//   link.setAttribute("href", encodedURI);
-//   link.setAttribute("download", "notes.csv");
-//   link.style.display = "none";
-
-//   // Append the link to the document body
-//   document.body.appendChild(link);
-
-//   // Programmatically click the link to trigger the download
-//   link.click();
-
-//   // Clean up the link element
-//   document.body.removeChild(link);
-// }
 // function getInfoAboutToday() {
 //     var currentDate = new Date();
 //     var today = currentDate.getMonth() + 1 + '/' + currentDate.getDate();
@@ -427,10 +556,9 @@ function getRandomJoke() {
     })
     .then(function (data) {
       var joke = data.joke || data.setup + " " + data.delivery;
-      var category = data.category || "Unknown";
 
       var noteContentTextArea = document.getElementById("note-content");
-      noteContentTextArea.value = joke + "\n\nCategory: " + category;
+      noteContentTextArea.value = joke;
     })
     .catch(function (error) {
       console.log("An error occurred while fetching the random joke:", error);
