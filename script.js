@@ -94,12 +94,11 @@ deleteButton.addEventListener("click", function () {
   $('#deleteModal').modal('show');
   var deleteNoteButton = document.getElementById('deleteNote');
   deleteNoteButton.addEventListener('click', function () {
-    var confirmed = confirm("Are you sure you want to delete?");
-    if (confirmed) {
+    
     li.parentNode.removeChild(li);
     localStorage.removeItem(noteKeyPrefix + noteId);
     $('#deleteModal').modal('hide');
-    }
+    
   });
 });
 
@@ -343,10 +342,9 @@ document.getElementById("clear-button").addEventListener("click", function () {
   $('#clearModal').modal('show');
   var clearAllNotesButton = document.getElementById('clearAll');
   clearAllNotesButton.addEventListener('click', function () {
-    var confirmed = confirm("Are you sure you want to clear all notes?");
-    if (confirmed) {
+    
       clearAllNotes();
-    }
+    
     $('#clearModal').modal('hide');
   });
 });
