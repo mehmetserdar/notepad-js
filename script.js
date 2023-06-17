@@ -89,7 +89,7 @@ function createNoteItem(noteId, noteContent, noteColor) {
   });
 
   var deleteButton = document.createElement("button");
-  deleteButton.className = "btn btn-edit btn-sm hide text-center";
+  deleteButton.className = "btn btn-edit btn-sm mr-2 hide text-center";
   deleteButton.innerHTML = "🗑️";
   deleteButton.addEventListener("click", function () {
     $("#deleteModal").modal("show");
@@ -102,7 +102,7 @@ function createNoteItem(noteId, noteContent, noteColor) {
   });
 
   var copyButton = document.createElement("button");
-  copyButton.className = "btn btn-edit btn-sm hide text-center";
+  copyButton.className = "btn btn-edit btn-sm mr-2 hide text-center";
   copyButton.innerHTML = "📋";
   copyButton.addEventListener("click", function () {
     // Get the text content from the note content element
