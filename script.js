@@ -111,21 +111,21 @@ function createNoteItem(noteId, noteContent, noteColor) {
       .getElementById("note-content")
       .setAttribute("data-note-id", noteId);
 
-  // Create a temporary textarea element
-  var textarea = document.createElement("textarea");
-  textarea.value = noteContent;
+    // Create a temporary textarea element
+    var textarea = document.createElement("textarea");
+    textarea.value = noteContent;
 
-  // Append the textarea to the document
-  document.body.appendChild(textarea);
+    // Append the textarea to the document
+    document.body.appendChild(textarea);
 
-  // Select the text inside the textarea
-  textarea.select();
+    // Select the text inside the textarea
+    textarea.select();
 
-  // Copy the selected text to the clipboard
-  document.execCommand("copy");
+    // Copy the selected text to the clipboard
+    document.execCommand("copy");
 
-  // Remove the temporary textarea from the document
-  document.body.removeChild(textarea);
+    // Remove the temporary textarea from the document
+    document.body.removeChild(textarea);
   });
 
   var editDeleteContainer = document.createElement("div");
@@ -583,14 +583,31 @@ document
   });
 
 function getRandomJoke() {
-  fetch(
-    "https://v2.jokeapi.dev/joke/Any?blacklistFlags=religious,racist,sexist,explicit,nsfw"
-  )
+  var jokeSources = [
+    "https://v2.jokeapi.dev/joke/Any?blacklistFlags=religious,racist,sexist,explicit,nsfw",
+    "https://official-joke-api.appspot.com/random_joke",
+  ];
+
+  var randomSource =
+    jokeSources[Math.floor(Math.random() * jokeSources.length)];
+  console.log(randomSource);
+  fetch(randomSource)
     .then(function (response) {
       return response.json();
     })
     .then(function (data) {
-      var joke = data.joke || data.setup + " " + data.delivery;
+      var joke = "";
+
+      if (
+        randomSource ===
+        "https://v2.jokeapi.dev/joke/Any?blacklistFlags=religious,racist,sexist,explicit,nsfw"
+      ) {
+        joke = data.joke || data.setup + " " + data.delivery;
+      } else if (
+        randomSource === "https://official-joke-api.appspot.com/random_joke"
+      ) {
+        joke = data.setup + " " + data.punchline;
+      }
 
       var noteContentTextArea = document.getElementById("note-content");
       noteContentTextArea.value = joke;
@@ -605,6 +622,54 @@ document
   .addEventListener("click", function () {
     getRandomJoke();
   });
+
+function getRandomAdvice() {
+  fetch("https://api.adviceslip.com/advice")
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      var advice = data.slip.advice;
+
+      var noteContentTextArea = document.getElementById("note-content");
+      noteContentTextArea.value = advice;
+    })
+    .catch(function (error) {
+      console.log("An error occurred while fetching the random advice:", error);
+    });
+}
+
+document
+  .getElementById("random-advice-button")
+  .addEventListener("click", function () {
+    getRandomAdvice();
+  });
+
+
+  function getRandomFact() {
+    fetch("https://raw.githubusercontent.com/mehmetserdar/facts-api/main/facts.json")
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        var facts = data.facts;
+        var randomIndex = Math.floor(Math.random() * facts.length);
+        var fact = facts[randomIndex];
+  
+        var noteContentTextArea = document.getElementById("note-content");
+        noteContentTextArea.value = fact;
+      })
+      .catch(function (error) {
+        console.log("An error occurred while fetching the random fact:", error);
+      });
+  }
+  
+  document
+    .getElementById("random-fact-button")
+    .addEventListener("click", function () {
+      getRandomFact();
+    });
+  
 
 function getRandomAffirmation() {
   fetch(
@@ -683,7 +748,6 @@ colorButtons.forEach(function (button) {
 // var clearBtn = document.querySelector("#clearBtn");
 // var exportBtn = document.querySelector("#exportBtn");
 // var importBtn = document.querySelector("#importBtn");
-
 
 // console.log(translation.saveBtn)
 // // Set the translated text for the buttons
