@@ -77,7 +77,7 @@
                 <button id="random-country-button" class="btn btn-new mt-3">Countries 🎲</button>
                 <button id="random-recipe-button" class="btn btn-new mt-3">Feeling hungry? 🎲</button>
                 <button id="random-activity-button" class="btn btn-new mt-3">Are you bored? 🎲</button>
-                <div id="google_translate_element" class="pt-3"></div>
+                
 
 
 
@@ -123,7 +123,9 @@
                 <ul id="note-list" class="list-group"></ul>
             </div>
         </div>
+        <div id="google_translate_element" class="pb-5 pt-2 text-center"></div>
     </div>
+    
 
     <!-- Modal -->
     <div class="modal fade" id="feeling-modal" tabindex="-1" role="dialog" aria-labelledby="feeling-modal-label"
@@ -199,7 +201,7 @@
             pageLanguage: 'en',
             includedLanguages: 'af,ar,bg,bn,ca,cs,da,de,el,en,es,et,fa,fi,fr,gu,hi,hr,hu,id,it,iw,ja,kn,ko,lt,lv,mk,mr,ms,nl,no,pl,pt,ro,ru,sk,sl,sq,sv,sw,ta,te,th,tl,tr,uk,ur,vi,zh-CN,zh-TW',
             layout: google.translate.TranslateElement.InlineLayout.TABBED,
-            autoDisplay: false
+            autoDisplay: true
           }, 'google_translate_element');
         }
       </script>
