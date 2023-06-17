@@ -669,8 +669,32 @@ document
     .addEventListener("click", function () {
       getRandomFact();
     });
-  
 
+    
+    function getRandomQuestion() {
+      fetch("https://raw.githubusercontent.com/mehmetserdar/askme-api/main/askme.json")
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (data) {
+          var questions = data.askme;
+          var randomIndex = Math.floor(Math.random() * questions.length);
+          var question = questions[randomIndex];
+    
+          var noteContentTextArea = document.getElementById("note-content");
+          noteContentTextArea.value = question;
+        })
+        .catch(function (error) {
+          console.log("An error occurred while fetching the random question:", error);
+        });
+    }
+    
+    document
+      .getElementById("random-question-button")
+      .addEventListener("click", function () {
+        getRandomQuestion();
+      });
+    
 function getRandomAffirmation() {
   fetch(
     "https://raw.githubusercontent.com/mehmetserdar/affirmations-api/main/affir.json"
