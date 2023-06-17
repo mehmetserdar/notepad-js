@@ -101,8 +101,36 @@ function createNoteItem(noteId, noteContent, noteColor) {
     });
   });
 
+  var copyButton = document.createElement("button");
+  copyButton.className = "btn btn-edit btn-sm hide text-center";
+  copyButton.innerHTML = "📋";
+  copyButton.addEventListener("click", function () {
+    // Get the text content from the note content element
+    document.getElementById("note-content").value = noteContent;
+    document
+      .getElementById("note-content")
+      .setAttribute("data-note-id", noteId);
+
+  // Create a temporary textarea element
+  var textarea = document.createElement("textarea");
+  textarea.value = noteContent;
+
+  // Append the textarea to the document
+  document.body.appendChild(textarea);
+
+  // Select the text inside the textarea
+  textarea.select();
+
+  // Copy the selected text to the clipboard
+  document.execCommand("copy");
+
+  // Remove the temporary textarea from the document
+  document.body.removeChild(textarea);
+  });
+
   var editDeleteContainer = document.createElement("div");
   editDeleteContainer.className = "float-right hidden";
+  editDeleteContainer.appendChild(copyButton);
   editDeleteContainer.appendChild(editButton);
   editDeleteContainer.appendChild(deleteButton);
 
