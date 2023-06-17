@@ -53,7 +53,6 @@
                     </div>
                 </div>
 
-
             </div>
 
             <div class="form-group">
@@ -78,6 +77,8 @@
                 <button id="random-country-button" class="btn btn-new mt-3">Countries 🎲</button>
                 <button id="random-recipe-button" class="btn btn-new mt-3">Feeling hungry? 🎲</button>
                 <button id="random-activity-button" class="btn btn-new mt-3">Are you bored? 🎲</button>
+                <div id="google_translate_element" class="pt-3"></div>
+
 
 
 
@@ -86,6 +87,7 @@
 
             </div>
         </div>
+        
         <div class="row mt-5">
             <div class="col-md-12">
                 <h3>Notes🗒️</h3>
@@ -186,10 +188,23 @@
       </div>
       <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center">
 
-       
+        
+
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+          new google.translate.TranslateElement({
+            pageLanguage: 'en',
+            includedLanguages: 'af,ar,bg,bn,ca,cs,da,de,el,en,es,et,fa,fi,fr,gu,hi,hr,hu,id,it,iw,ja,kn,ko,lt,lv,mk,mr,ms,nl,no,pl,pt,ro,ru,sk,sl,sq,sv,sw,ta,te,th,tl,tr,uk,ur,vi,zh-CN,zh-TW',
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+            autoDisplay: false
+          }, 'google_translate_element');
+        }
+      </script>
+      <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+      
     <script src="script.js"></script>
 </body>
 

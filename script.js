@@ -656,38 +656,38 @@ colorButtons.forEach(function (button) {
   });
 });
 
-// Translation messages for different languages
-var messages = {
-  en: {
-    saveBtn: "Save 💾",
-    clearBtn: "Clear All🗑️",
-    exportBtn: "Export 📁",
-    importBtn: "Import 💻"
-  },
-  tr: {
-    saveBtn: "Kaydet 💾",
-    clearBtn: "Tümünü Sil🗑️",
-    exportBtn: "Dışarı Çıkar 📁",
-    importBtn: "İçeri Aktar 💻"
-  }
-};
+// // Translation messages for different languages
+// var messages = {
+//   en: {
+//     saveBtn: "Save 💾",
+//     clearBtn: "Clear All🗑️",
+//     exportBtn: "Export 📁",
+//     importBtn: "Import 💻"
+//   },
+//   tr: {
+//     saveBtn: "Kaydet 💾",
+//     clearBtn: "Tümünü Sil🗑️",
+//     exportBtn: "Dışarı Çıkar 📁",
+//     importBtn: "İçeri Aktar 💻"
+//   }
+// };
 
-// Get the user's preferred language
-var userLanguage = navigator.language || navigator.userLanguage;
+// // Get the user's preferred language
+// var userLanguage = navigator.language || navigator.userLanguage;
 
-// Check if the user's language translation is available
-var translation = messages[userLanguage] || messages.en;
+// // Check if the user's language translation is available
+// var translation = messages[userLanguage] || messages.en;
 
-// Find the copy and edit buttons
-var saveBtn = document.querySelector("#saveBtn");
-var clearBtn = document.querySelector("#clearBtn");
-var exportBtn = document.querySelector("#exportBtn");
-var importBtn = document.querySelector("#importBtn");
+// // Find the copy and edit buttons
+// var saveBtn = document.querySelector("#saveBtn");
+// var clearBtn = document.querySelector("#clearBtn");
+// var exportBtn = document.querySelector("#exportBtn");
+// var importBtn = document.querySelector("#importBtn");
 
 
-console.log(translation.saveBtn)
-// Set the translated text for the buttons
-saveBtn.innerHTML = translation.saveBtn;
-clearBtn.textContent = translation.clearBtn;
-exportBtn.textContent = translation.exportBtn;
-importBtn.textContent = translation.importBtn;
+// console.log(translation.saveBtn)
+// // Set the translated text for the buttons
+// saveBtn.innerHTML = translation.saveBtn;
+// clearBtn.textContent = translation.clearBtn;
+// exportBtn.textContent = translation.exportBtn;
+// importBtn.textContent = translation.importBtn;
