@@ -62,15 +62,27 @@
   background-color: var(--edit-color);
   border-color: #BDBDBD;
   color: #000;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  text-align: center;
 }
 .btn-edit:hover {
   background-color: #757575;
   border-color: #757575;
   color: #fff;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  text-align: center;
 }
 
 .list-group-item {
     position: relative;
+}
+
+.list-group-item.hide {
+  display: none;
 }
 
 .note-content {
@@ -136,7 +148,31 @@
   border-radius: 50%;
 }
 
+.filter-button {
+  width: 20px;
+  height: 20px;
+  border: 1px solid lightgray;
+  margin-right: 5px;
+  cursor: pointer;
+  border-radius: 50%;
+}
 
 .form-group {
   margin-bottom: 15px;
+}
+
+#show-all-button {
+  background-image: url('./img/circled.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-color: transparent;
+  width: 20px; /* Adjust width and height as needed */
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid lightgray;
+  cursor: pointer;
+}
+
+.hidden{
+  display: none;
 }

@@ -70,33 +70,56 @@ function createNoteItem(noteId, noteContent, noteColor) {
   noteContentElement.innerHTML = noteContent;
   li.appendChild(noteContentElement);
 
-  var editButton = document.createElement("button");
-  editButton.className = "btn btn-edit btn-sm mr-2";
-  editButton.innerHTML = "Edit ✏️";
-  editButton.addEventListener("click", function () {
-    document.getElementById("note-content").value = noteContent;
-    document
-      .getElementById("note-content")
-      .setAttribute("data-note-id", noteId);
-  });
+  var setButton = document.createElement("button");
+setButton.className = "btn btn-edit btn-sm mr-2";
+setButton.innerHTML = "⚙️";
+setButton.addEventListener("click", function () {
+  editDeleteContainer.classList.toggle("hidden");
+});
 
-  var deleteButton = document.createElement("button");
-  deleteButton.className = "btn btn-edit btn-sm";
-  deleteButton.innerHTML = "Delete ❌";
-  deleteButton.addEventListener("click", function () {
+var editButton = document.createElement("button");
+editButton.className = "btn btn-edit btn-sm mr-2 hide";
+editButton.innerHTML = "✏️";
+editButton.addEventListener("click", function () {
+  document.getElementById("note-content").value = noteContent;
+  document
+    .getElementById("note-content")
+    .setAttribute("data-note-id", noteId);
+});
+
+var deleteButton = document.createElement("button");
+deleteButton.className = "btn btn-edit btn-sm hide text-center";
+deleteButton.innerHTML = "❌";
+deleteButton.addEventListener("click", function () {
+  $('#deleteModal').modal('show');
+  var deleteNoteButton = document.getElementById('deleteNote');
+  deleteNoteButton.addEventListener('click', function () {
+    var confirmed = confirm("Are you sure you want to delete?");
+    if (confirmed) {
     li.parentNode.removeChild(li);
     localStorage.removeItem(noteKeyPrefix + noteId);
-    alert("Note deleted!");
+    $('#deleteModal').modal('hide');
+    }
   });
+});
 
-  var editDeleteContainer = document.createElement("div");
-  editDeleteContainer.className = "float-right";
-  editDeleteContainer.appendChild(editButton);
-  editDeleteContainer.appendChild(deleteButton);
 
-  li.appendChild(editDeleteContainer);
 
-  return li;
+
+var editDeleteContainer = document.createElement("div");
+editDeleteContainer.className = "float-right hidden";
+editDeleteContainer.appendChild(editButton);
+editDeleteContainer.appendChild(deleteButton);
+
+var setContainer = document.createElement("div");
+setContainer.className ="float-right";
+setContainer.appendChild(setButton);
+
+li.appendChild(editDeleteContainer);
+li.appendChild(setContainer);
+
+return li;
+
 }
 
 function updateNoteColor(color) {
@@ -317,12 +340,19 @@ function getFormattedDate() {
 }
 
 document.getElementById("clear-button").addEventListener("click", function () {
-  var confirmed = confirm("Are you sure you want to clear all notes?");
-  if (confirmed) {
-    clearAllNotes();
-    alert("All notes cleared!");
-  }
+  $('#clearModal').modal('show');
+  var clearAllNotesButton = document.getElementById('clearAll');
+  clearAllNotesButton.addEventListener('click', function () {
+    var confirmed = confirm("Are you sure you want to clear all notes?");
+    if (confirmed) {
+      clearAllNotes();
+    }
+    $('#clearModal').modal('hide');
+  });
 });
+
+
+
 
 function clearAllNotes() {
   // Clear all notes from the note list
@@ -599,3 +629,26 @@ document
   .addEventListener("click", function () {
     getRandomAffirmation();
   });
+
+
+  var colorButtons = document.querySelectorAll('.filter-button');
+
+  colorButtons.forEach(function(button) {
+    button.addEventListener('click', function() {
+      var selectedColor = button.getAttribute('data-color');
+      console.log(selectedColor);
+      
+      var noteItems = document.querySelectorAll('.list-group-item');
+      noteItems.forEach(function(note) {
+        var noteColor = note.style.backgroundColor; // Set the note item background color
+        noteColor = rgbToHex(noteColor);
+        console.log(noteColor);
+        if (selectedColor === 'all' || noteColor === selectedColor) {
+          note.classList.remove('hide');
+        } else {
+          note.classList.add('hide');
+        }
+      });
+    });
+  });
+  
