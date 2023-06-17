@@ -29,9 +29,11 @@
   color: #fff;
 }
 
+
+
 .btn-warning {
-  background-color: var(--warning-color);
-  border-color: #FFC107;
+  background-color: #ffcc99;
+  border-color: #fab168;
   color: #fff;
 }
 
