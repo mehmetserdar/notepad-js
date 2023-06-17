@@ -3,8 +3,8 @@ var colorButtons = document.getElementsByClassName("color-button");
 var feelingButton = document.getElementById("feeling-button");
 var feelingModal = document.getElementById("feeling-modal");
 var feelingChoices = document.getElementsByClassName("feeling-choice");
-var importButton = document.getElementById("import-button");
-var exportButton = document.getElementById("export-button");
+var importButton = document.getElementById("importBtn");
+var exportButton = document.getElementById("exportBtn");
 var importFile = document.getElementById("import-file");
 
 function handleColorButtonClick(event) {
@@ -161,7 +161,7 @@ for (var i = 0; i < colorButtons.length; i++) {
   colorButtons[i].addEventListener("click", handleColorButtonClick);
 }
 
-document.getElementById("save-button").addEventListener("click", function () {
+document.getElementById("saveBtn").addEventListener("click", function () {
   var noteContent = document.getElementById("note-content").value.trim(); // Trim leading and trailing whitespace
   if (noteContent.trim() !== "") {
     var noteId = document
@@ -350,7 +350,7 @@ function getFormattedDate() {
   return date.toLocaleDateString("en-US", options);
 }
 
-document.getElementById("clear-button").addEventListener("click", function () {
+document.getElementById("clearBtn").addEventListener("click", function () {
   $("#clearModal").modal("show");
   var clearAllNotesButton = document.getElementById("clearAll");
   clearAllNotesButton.addEventListener("click", function () {
@@ -655,3 +655,39 @@ colorButtons.forEach(function (button) {
     });
   });
 });
+
+// Translation messages for different languages
+var messages = {
+  en: {
+    saveBtn: "Save 💾",
+    clearBtn: "Clear All🗑️",
+    exportBtn: "Export 📁",
+    importBtn: "Import 💻"
+  },
+  tr: {
+    saveBtn: "Kaydet 💾",
+    clearBtn: "Tümünü Sil🗑️",
+    exportBtn: "Dışarı Çıkar 📁",
+    importBtn: "İçeri Aktar 💻"
+  }
+};
+
+// Get the user's preferred language
+var userLanguage = navigator.language || navigator.userLanguage;
+
+// Check if the user's language translation is available
+var translation = messages[userLanguage] || messages.en;
+
+// Find the copy and edit buttons
+var saveBtn = document.querySelector("#saveBtn");
+var clearBtn = document.querySelector("#clearBtn");
+var exportBtn = document.querySelector("#exportBtn");
+var importBtn = document.querySelector("#importBtn");
+
+
+console.log(translation.saveBtn)
+// Set the translated text for the buttons
+saveBtn.innerHTML = translation.saveBtn;
+clearBtn.textContent = translation.clearBtn;
+exportBtn.textContent = translation.exportBtn;
+importBtn.textContent = translation.importBtn;
