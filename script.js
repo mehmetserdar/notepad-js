@@ -695,34 +695,33 @@ document
         getRandomQuestion();
       });
     
-function getRandomAffirmation() {
-  fetch(
-    "https://raw.githubusercontent.com/mehmetserdar/affirmations-api/main/affir.json"
-  )
-    .then(function (response) {
-      return response.json();
-    })
-    .then(function (data) {
-      var affirmations = data.affirmations;
-      var randomIndex = Math.floor(Math.random() * affirmations.length);
-      var affirmation = affirmations[randomIndex];
-
-      var noteContentTextArea = document.getElementById("note-content");
-      noteContentTextArea.value = affirmation;
-    })
-    .catch(function (error) {
-      console.log(
-        "An error occurred while fetching the random affirmation:",
-        error
-      );
-    });
-}
-
-document
-  .getElementById("random-affirmation-button")
-  .addEventListener("click", function () {
-    getRandomAffirmation();
-  });
+      function getRandomAffirmation() {
+        fetch("https://raw.githubusercontent.com/mehmetserdar/affirmations-api/main/affir.json")
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (data) {
+            var categories = data.categories;
+            var randomCategoryIndex = Math.floor(Math.random() * categories.length);
+            var category = categories[randomCategoryIndex];
+            var affirmations = category.affirmations;
+            var randomAffirmationIndex = Math.floor(Math.random() * affirmations.length);
+            var affirmation = affirmations[randomAffirmationIndex];
+      
+            var noteContentTextArea = document.getElementById("note-content");
+            noteContentTextArea.value = affirmation;
+          })
+          .catch(function (error) {
+            console.log("An error occurred while fetching the random affirmation:", error);
+          });
+      }
+      
+      document
+        .getElementById("random-affirmation-button")
+        .addEventListener("click", function () {
+          getRandomAffirmation();
+        });
+      
 
 var colorButtons = document.querySelectorAll(".filter-button");
 
