@@ -1,4 +1,3 @@
-var noteKeyPrefix = "note_";
 var colorButtons = document.getElementsByClassName("color-button");
 var feelingButton = document.getElementById("feeling-button");
 var feelingModal = document.getElementById("feeling-modal");
@@ -79,27 +78,47 @@ function createNoteItem(noteId, noteContent, noteColor) {
   });
 
   var editButton = document.createElement("button");
-  editButton.className = "btn btn-edit btn-sm mr-2 hide";
-  editButton.innerHTML = "✏️";
-  editButton.addEventListener("click", function () {
-    document.getElementById("note-content").value = noteContent;
-    document
-      .getElementById("note-content")
-      .setAttribute("data-note-id", noteId);
-  });
+editButton.className = "btn btn-edit btn-sm mr-2 hide text-center";
+editButton.innerHTML = "✏️";
+editButton.addEventListener("click", function () {
+  var noteId = li.getAttribute("id");
+  if (noteId !== null) {
+    var notes = JSON.parse(localStorage.getItem("notes")) || [];
+    var existingNote = notes.find(function (note) {
+      return note.id === parseInt(noteId, 10); // Parse note.id to an integer for comparison
+    });
+    if (existingNote) {
+      document.getElementById("note-content").value = existingNote.content;
+      document.getElementById("note-content").setAttribute("data-note-id", noteId);
+      document.getElementById("note-content").style.backgroundColor = existingNote.color;
+    }
+  }
+});
+
+
+  
 
   var deleteButton = document.createElement("button");
-  deleteButton.className = "btn btn-edit btn-sm mr-2 hide text-center";
-  deleteButton.innerHTML = "🗑️";
-  deleteButton.addEventListener("click", function () {
-    $("#deleteModal").modal("show");
-    var deleteNoteButton = document.getElementById("deleteNote");
-    deleteNoteButton.addEventListener("click", function () {
-      li.parentNode.removeChild(li);
-      localStorage.removeItem(noteKeyPrefix + noteId);
-      $("#deleteModal").modal("hide");
-    });
+deleteButton.className = "btn btn-edit btn-sm mr-2 hide text-center";
+deleteButton.innerHTML = "🗑️";
+deleteButton.addEventListener("click", function () {
+  $("#deleteModal").modal("show");
+  var deleteNoteButton = document.getElementById("deleteNote");
+  deleteNoteButton.addEventListener("click", function () {
+    var noteId = li.getAttribute("id");
+    if (noteId) {
+      var notes = JSON.parse(localStorage.getItem("notes")) || [];
+      var updatedNotes = notes.filter(function (note) {
+        return note.id !== noteId;
+      });
+      localStorage.setItem("notes", JSON.stringify(updatedNotes));
+    }
+
+    li.parentNode.removeChild(li);
+    $("#deleteModal").modal("hide");
   });
+});
+
 
   var copyButton = document.createElement("button");
   copyButton.className = "btn btn-edit btn-sm mr-2 hide text-center";
@@ -109,7 +128,7 @@ function createNoteItem(noteId, noteContent, noteColor) {
     document.getElementById("note-content").value = noteContent;
     document
       .getElementById("note-content")
-      .setAttribute("data-note-id", noteId);
+      .setAttribute("id", noteId);
 
     // Create a temporary textarea element
     var textarea = document.createElement("textarea");
@@ -147,13 +166,19 @@ function createNoteItem(noteId, noteContent, noteColor) {
 function updateNoteColor(color) {
   var noteItem = document.getElementById("note-content");
   noteItem.style.backgroundColor = color;
-  var noteColor = document.getElementById("note-content").style.backgroundColor;
-  noteColor = rgbToHex(noteColor);
-  var noteId = noteItem.getAttribute("data-note-id");
+  var noteColor = rgbToHex(color);
+  var noteId = noteItem.getAttribute("id");
+  
   if (noteId) {
-    var noteData = JSON.parse(localStorage.getItem(noteKeyPrefix + noteId));
-    noteData.color = color;
-    localStorage.setItem(noteKeyPrefix + noteId, JSON.stringify(noteData));
+    var existingNotes = JSON.parse(localStorage.getItem("notes")) || [];
+    var existingNoteIndex = existingNotes.findIndex(function (note) {
+      return note.id === noteId;
+    });
+    
+    if (existingNoteIndex !== -1) {
+      existingNotes[existingNoteIndex].color = noteColor;
+      localStorage.setItem("notes", JSON.stringify(existingNotes));
+    }
   }
 }
 
@@ -162,43 +187,67 @@ for (var i = 0; i < colorButtons.length; i++) {
 }
 
 document.getElementById("saveBtn").addEventListener("click", function () {
-  var noteContent = document.getElementById("note-content").value.trim(); // Trim leading and trailing whitespace
+  var noteContent = document.getElementById("note-content").value.trim();
   if (noteContent.trim() !== "") {
-    var noteId = document
-      .getElementById("note-content")
-      .getAttribute("data-note-id");
-    var noteColor =
-      document.getElementById("note-content").style.backgroundColor;
+    var noteId = document.getElementById("note-content").getAttribute("data-note-id");
+    var noteColor = document.getElementById("note-content").style.backgroundColor;
     noteColor = rgbToHex(noteColor);
-    if (noteId) {
+    
+    var notes = JSON.parse(localStorage.getItem("notes")) || [];
+    var existingNote = notes.find(function (note) {
+      return note.id === parseInt(noteId, 10); // Parse noteId to an integer for comparison
+    });
+
+    if (existingNote) {
       // Update existing note
-      var noteItem = document.getElementById(noteId);
-      noteItem.querySelector(".note-content").innerHTML = noteContent;
-      updateNoteColor(noteId, noteColor);
-      localStorage.setItem(
-        noteKeyPrefix + noteId,
-        JSON.stringify({ content: noteContent, color: noteColor })
-      );
-      // Refresh the page
-      location.reload();
+      existingNote.content = noteContent;
+      existingNote.color = noteColor;
+      localStorage.setItem("notes", JSON.stringify(notes));
     } else {
       // Create new note
-      noteId = Date.now(); // Generate a unique ID for the note
-      var noteItem = createNoteItem(noteId, noteContent, noteColor);
-      document.getElementById("note-list").appendChild(noteItem);
-      localStorage.setItem(
-        noteKeyPrefix + noteId,
-        JSON.stringify({ content: noteContent, color: noteColor })
-      );
-      // Refresh the page
-      location.reload();
+      noteId = Date.now();
+      var newNote = {
+        id: noteId,
+        content: noteContent,
+        color: noteColor
+      };
+      notes.push(newNote);
+      localStorage.setItem("notes", JSON.stringify(notes));
     }
+
+    // Refresh the page
+    location.reload();
+
     document.getElementById("note-content").value = "";
     document.getElementById("note-content").removeAttribute("data-note-id");
   }
 });
 
-// Function to export notes as CSV
+
+
+function createNewNote() {
+  var noteId = Date.now(); // Generate a unique ID for the note
+  var noteContent = document.getElementById("note-content").value.trim();
+  var noteColor = document.getElementById("note-content").style.backgroundColor;
+  noteColor = rgbToHex(noteColor);
+
+  var noteItem = createNoteItem(noteId, noteContent, noteColor);
+  document.getElementById("note-list").appendChild(noteItem);
+
+  var newNote = {
+    id: noteId,
+    content: noteContent,
+    color: noteColor
+  };
+  var notes = JSON.parse(localStorage.getItem("notes")) || [];
+  notes.push(newNote);
+  localStorage.setItem("notes", JSON.stringify(notes));
+
+  // Refresh the page
+  location.reload();
+}
+
+
 function exportNotesAsCSV() {
   var csvContent = "";
 
@@ -206,36 +255,39 @@ function exportNotesAsCSV() {
   var header = ["NoteId", "NoteContent", "NoteColor"];
   csvContent += header.join(",") + "\n";
 
+  // Get the notes array from local storage
+  var notes = JSON.parse(localStorage.getItem("notes")) || [];
+
   // Iterate over the notes and add them to the CSV content
-  for (var i = 0; i < localStorage.length; i++) {
-    var key = localStorage.key(i);
-    if (key.startsWith(noteKeyPrefix)) {
-      var noteId = key.substring(noteKeyPrefix.length);
-      var noteData = JSON.parse(localStorage.getItem(key));
-      var noteContent = noteData.content;
-      var noteColor = noteData.color || "#ffffff"; // Default color if not set
+  for (var i = 0; i < notes.length; i++) {
+    var noteId = notes[i].id;
+    var noteContent = notes[i].content;
 
-      // Convert RGB color value to hex
+    // Convert RGB color value to hex
+    var noteColor = rgbToHex(notes[i].color || "#ffffff"); // Default color if not set
 
-      var row = [noteId, noteContent, noteColor];
+    var row = [noteId, noteContent, noteColor];
 
-      csvContent += '"' + row.join('","') + '"\n';
-    }
+    csvContent += '"' + row.join('","') + '"\n';
   }
 
-  // Create a Blob object with the CSV content
+  // Create a Blob to save the CSV data
   var blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
 
-  // Create a link element and set the Blob object as its href
+  // Create a temporary anchor element to trigger the download
   var link = document.createElement("a");
-  link.setAttribute("href", URL.createObjectURL(blob));
-  link.setAttribute("download", "notes.csv");
+  link.href = URL.createObjectURL(blob);
+  link.download = "notes.csv";
+  link.style.display = "none";
   document.body.appendChild(link);
 
-  // Trigger the click event to download the CSV file
+  // Trigger the download
   link.click();
+
+  // Clean up
   document.body.removeChild(link);
 }
+
 // Function to import notes from CSV
 function importNotesFromCSV(file) {
   return new Promise(function (resolve, reject) {
@@ -281,14 +333,29 @@ importButton.addEventListener("click", function () {
   importFile.click();
 });
 
-// Function to save note to local storage
 function saveNoteToLocalStorage(noteId, noteContent, noteColor) {
   return new Promise(function (resolve) {
+    var existingNotes = JSON.parse(localStorage.getItem("notes")) || [];
+    
     var noteData = {
+      id: noteId,
       content: noteContent,
       color: noteColor,
     };
-    localStorage.setItem(noteKeyPrefix + noteId, JSON.stringify(noteData));
+
+    // Check if the note with the given ID already exists
+    var existingNoteIndex = existingNotes.findIndex(function (note) {
+      return note.id === noteId;
+    });
+
+    // If the note exists, update it; otherwise, add a new note
+    if (existingNoteIndex !== -1) {
+      existingNotes[existingNoteIndex] = noteData;
+    } else {
+      existingNotes.push(noteData);
+    }
+
+    localStorage.setItem("notes", JSON.stringify(existingNotes));
     resolve();
   });
 }
@@ -320,22 +387,21 @@ importFile.addEventListener("change", function (event) {
 
 document.addEventListener("DOMContentLoaded", function () {
   // Load all saved notes from local storage
-  for (var i = 0; i < localStorage.length; i++) {
-    var key = localStorage.key(i);
-    if (key.startsWith(noteKeyPrefix)) {
-      try {
-        var noteId = key.substring(noteKeyPrefix.length);
-        var noteData = JSON.parse(localStorage.getItem(key));
-        var noteContent = noteData.content;
-        var noteColor = noteData.color || "#ffffff"; // Default color if not set
-        var noteItem = createNoteItem(noteId, noteContent, noteColor);
-        document.getElementById("note-list").appendChild(noteItem);
-      } catch (error) {
-        console.error("Error parsing note data:", error);
-      }
+  var notes = JSON.parse(localStorage.getItem("notes")) || [];
+
+  notes.forEach(function (noteData) {
+    try {
+      var noteId = noteData.id;
+      var noteContent = noteData.content;
+      var noteColor = noteData.color || "#ffffff"; // Default color if not set
+      var noteItem = createNoteItem(noteId, noteContent, noteColor);
+      document.getElementById("note-list").appendChild(noteItem);
+    } catch (error) {
+      console.error("Error parsing note data:", error);
     }
-  }
+  });
 });
+
 
 function getFormattedDate() {
   var date = new Date();
@@ -365,29 +431,12 @@ function clearAllNotes() {
   var noteList = document.getElementById("note-list");
   noteList.innerHTML = "";
 
-  // Retrieve all note keys with the "note_" prefix
-  var noteKeys = [];
-  for (var i = 0; i < localStorage.length; i++) {
-    var key = localStorage.key(i);
-    if (key.startsWith(noteKeyPrefix)) {
-      noteKeys.push(key);
-    }
-  }
-
-  // Asynchronously remove notes from local storage
-  var removalPromises = noteKeys.map(function (key) {
-    return new Promise(function (resolve) {
-      localStorage.removeItem(key);
-      resolve();
-    });
-  });
-
-  // Wait for all removal promises to resolve
-  Promise.all(removalPromises).then(function () {
-    console.log("All notes cleared successfully.");
-    // Perform any additional actions after all notes are cleared
-  });
+  // Clear the local storage array by setting it to an empty array
+  localStorage.setItem("notes", JSON.stringify([]));
 }
+
+
+
 
 // function clearAllNotes() {
 //   // Clear all notes from local storage
@@ -569,7 +618,7 @@ function getRandomQuote() {
       var author = data[randomIndex].author || "Unknown";
 
       var noteContentTextArea = document.getElementById("note-content");
-      noteContentTextArea.value = '"' + quote + '" - ' + author;
+      noteContentTextArea.value = '"' + quote + '" - ' + author.slice(0, -10);
     })
     .catch(function (error) {
       console.log("An error occurred while fetching the random quote:", error);
